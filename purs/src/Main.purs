@@ -17,3 +17,6 @@ main = do
 
   log "Day 2 - Part 1"
   log $ show Day2.part1
+
+  log "Day 2 - Part 2"
+  log $ show Day2.part2
