@@ -16,9 +16,25 @@
    [2432	4030	3397	4032	3952	2727	157	3284	3450	3229	4169	3471	4255	155	127	186]
    [919	615	335	816	138	97	881	790	855	89	451	789	423	108	95	116]])
 
+;; Part 1
+
 (def xmaxmin (map (juxt (partial apply max)
                         (partial apply min))))
 
 (def xdiff (map (partial apply -)))
 
 (def result (transduce (comp xmaxmin xdiff) + input))
+
+;; Part 2
+
+(defn divs [xs]
+  (for [x xs y xs]
+    ((juxt quot rem) x y)))
+
+(defn only-div [row]
+  (->> (divs row)
+       (filter (comp #{0} second))
+       (remove (comp #{1} first))
+       ffirst))
+
+(reduce + (map only-div input))
