@@ -16,9 +16,9 @@
    [2432	4030	3397	4032	3952	2727	157	3284	3450	3229	4169	3471	4255	155	127	186]
    [919	615	335	816	138	97	881	790	855	89	451	789	423	108	95	116]])
 
-(def xminmax (map (juxt (partial apply max)
+(def xmaxmin (map (juxt (partial apply max)
                         (partial apply min))))
 
 (def xdiff (map (partial apply -)))
 
-(def result (transduce (comp xminmax xdiff) + input))
+(def result (transduce (comp xmaxmin xdiff) + input))
