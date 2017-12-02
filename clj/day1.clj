@@ -8,3 +8,11 @@
                    0))
                input
                (drop 1 (cycle input))))
+
+
+(reduce + (map (fn [a b]
+                 (if (= a b)
+                   (read-string (str a))
+                   0))
+               input
+               (drop (/ (count input) 2) (cycle input))))
