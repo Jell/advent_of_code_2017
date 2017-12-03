@@ -8,6 +8,9 @@
   21  22  23
   )
 
+(def target 361527)
+
+;; Part 1
 (def dirs (cycle [:right :up :left :down]))
 
 (defn coords-iter [target idx [dir & next-dirs :as dirs] [x y]]
@@ -54,14 +57,15 @@
   (+ (Math/abs x)
      (Math/abs y)))
 
-(dist (coords 361527))
+(dist (coords target))
 
+;; Part 2
 (reduce (fn [vals idx]
           (let [[x y] (coords idx)
                 v (reduce +' (for [dx (range -1 2) dy (range -1 2)]
                                (get vals [(+' x dx) (+' y dy)] 0)))]
-            (if (> v 361527)
+            (if (> v target)
               (reduced v)
               (assoc vals [x y] v))))
         {[0 0] 1}
-        (range 2 361527))
+        (range 2 target))
