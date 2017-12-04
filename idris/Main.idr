@@ -12,3 +12,4 @@ main = do putStrLn "Day 1"
           printLn Day2.part2
           putStrLn "Day 3"
           printLn Day3.part1
+          printLn Day3.part2
