@@ -25,10 +25,10 @@ part2 = solve input halfLength
     two : Nat
     two = 2
 
-    zeroNotEqTwo : (two = 0) -> Void
-    zeroNotEqTwo = case decEq two 0 of
+    twoNotEqNZ : (two = 0) -> Void
+    twoNotEqNZ = case decEq two 0 of
                         (Yes Refl) impossible
                         (No contra) => contra
 
     halfLength : String -> Nat
-    halfLength s = divNatNZ (length s) two zeroNotEqTwo
+    halfLength s = divNatNZ (length s) two twoNotEqNZ
