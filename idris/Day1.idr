@@ -25,7 +25,7 @@ part2 = solve input halfLength
     two : Nat
     two = 2
 
-    twoNotEqNZ : (two = 0) -> Void
+    twoNotEqNZ : Not (two = 0)
     twoNotEqNZ = case decEq two 0 of
                         (Yes Refl) impossible
                         (No contra) => contra
