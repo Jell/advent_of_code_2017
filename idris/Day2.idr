@@ -22,9 +22,9 @@ input = [[116, 1259, 1045, 679, 1334, 157, 277, 1217, 218, 641, 1089, 136, 247, 
 minmaxdiff : List Nat -> Maybe Nat
 minmaxdiff xs = do min <- head' sorted
                    max <- last' sorted
-                   pure $ case isLTE min max of
-                               Yes prd => max - min
-                               No contra => 0
+                   case isLTE min max of
+                        Yes prf => Just $ max - min
+                        No contra => Nothing
   where sorted = sort xs
 
 export
