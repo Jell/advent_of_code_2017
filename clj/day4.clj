@@ -514,20 +514,18 @@ cgc jazrp crgnna uvuokl uvuokl uoiwl sknmc sknmc
 rvbu czwpdit vmlihg spz lfaxxev zslfuto oog dvoksub")
 
 ;; Part 1
-(-> input
-    (str/split #"\n")
-    (->> (map #(str/split % #" "))
-         (map frequencies)
-         (map vals)
-         (filter (partial every? #{1}))
-         count))
+(->> (str/split #"\n" input)
+     (map #(str/split % #" "))
+     (map frequencies)
+     (map vals)
+     (filter (partial every? #{1}))
+     count)
 
 ;; Part 2
-(-> input
-    (str/split #"\n")
-    (->> (map #(str/split % #" "))
-         (map (partial map sort))
-         (map frequencies)
-         (map vals)
-         (filter (partial every? #{1}))
-         count))
+(->> (str/split #"\n" input)
+     (map #(str/split % #" "))
+     (map (partial map sort))
+     (map frequencies)
+     (map vals)
+     (filter (partial every? #{1}))
+     count)
