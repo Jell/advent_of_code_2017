@@ -31,16 +31,18 @@ export
 part1 : Nat
 part1 = sum $ catMaybes $ map minmaxdiff input
 
-partial
 divs : List Nat -> List Nat
 divs xs = do a <- xs
              b <- xs
-             let d = div a b
-             let m = mod a b
-             if (m == 0) && (d > 1)
-             then [d]
-             else []
+             case decEq b 0 of
+               Yes Refl => []
+               No notZero => do
+                 let d = divNatNZ a b notZero
+                 let m = modNatNZ a b notZero
+                 if (m == 0) && (d > 1)
+                 then [d]
+                 else []
 
-partial export
+export
 part2 : Nat
 part2 = sum $ map (sum . divs) input
