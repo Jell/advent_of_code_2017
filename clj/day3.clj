@@ -17,10 +17,10 @@
   (lazy-seq
    (cons [x y]
          (case dir
-           :right (coords-iter (if (= x (Math/abs y)) next-dirs dirs) [(inc x) y])
-           :up    (coords-iter (if (= x (inc y))      next-dirs dirs) [x (inc y)])
-           :left  (coords-iter (if (= (dec x) (- y))  next-dirs dirs) [(dec x) y])
-           :down  (coords-iter (if (= x (dec y))      next-dirs dirs) [x (dec y)])))))
+           :right (coords-iter (if (= x (- y))       next-dirs dirs) [(inc x) y])
+           :up    (coords-iter (if (= x (inc y))     next-dirs dirs) [x (inc y)])
+           :left  (coords-iter (if (= (dec x) (- y)) next-dirs dirs) [(dec x) y])
+           :down  (coords-iter (if (= x (dec y))     next-dirs dirs) [x (dec y)])))))
 
 (def coords (coords-iter dirs [0 0]))
 
