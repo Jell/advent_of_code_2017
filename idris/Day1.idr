@@ -18,7 +18,17 @@ export
 part1 : Nat
 part1 = solve input (const 1)
 
-partial export
+export
 part2 : Nat
 part2 = solve input halfLength
-  where halfLength s = div (length s) (the Nat 2)
+  where
+    two : Nat
+    two = 2
+
+    zeroNotEqTwo : (two = 0) -> Void
+    zeroNotEqTwo = case decEq two 0 of
+                        (Yes Refl) impossible
+                        (No contra) => contra
+
+    halfLength : String -> Nat
+    halfLength s = divNatNZ (length s) two zeroNotEqTwo
