@@ -47,7 +47,6 @@ coordsIter n (Tuple c dir) = coordsIter (n - 1) (Tuple newCoords newDir)
                  else dir
         newCoords = (coordsStep dir c)
 
-
 coords :: Int -> Coords
 coords n = fst $ coordsIter n (Tuple (Coords 0 0) Right)
 
