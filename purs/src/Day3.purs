@@ -1,18 +1,10 @@
 module Day3 where
 
-import Data.Boolean
-import Data.Maybe
 import Prelude
 
-import Data.Array as Array
-import Data.Foldable (sum, and)
 import Data.Generic (class Generic, gShow)
-import Data.Lazy (Lazy, defer, force)
-import Data.List.Lazy (List, Step(..), take, (:), nil, last, iterate, index)
 import Data.Ord (abs)
-import Data.Traversable as T
 import Data.Tuple (Tuple(..), fst)
-import Partial.Unsafe (unsafePartial)
 
 data Dir = Right | Up | Left | Down
 derive instance genericDir :: Generic Dir
