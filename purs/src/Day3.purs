@@ -12,6 +12,12 @@ derive instance genericDir :: Generic Dir
 instance showDir :: Show Dir where
   show = gShow
 
+data Coords = Coords Int Int
+derive instance genericCoords :: Generic Coords
+
+instance showCoords :: Show Coords where
+  show = gShow
+
 target :: Int
 target = 361527
 
@@ -20,12 +26,6 @@ nextDir Right = Up
 nextDir Up    = Left
 nextDir Left  = Down
 nextDir Down  = Right
-
-data Coords = Coords Int Int
-derive instance genericCoords :: Generic Coords
-
-instance showCoords :: Show Coords where
-  show = gShow
 
 transition :: Dir -> Coords -> Boolean
 transition Right (Coords x y) = x == -y
