@@ -1,2 +1,3 @@
 *.ibc
 /idris/result
+.DS_Store
