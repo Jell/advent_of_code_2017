@@ -11,12 +11,7 @@ import Lightyear.Strings
 %provide (inputString : String) with readString "Day9_input.txt"
 
 -- Types
-data Tree = Garbage String
-          | Group (List Tree)
-
-Show Tree where
-  show (Garbage x) = x
-  show (Group xs) = show xs
+data Stream = Garbage String | Group (List Stream)
 
 -- Parser
 garbageString' : Parser (List Char)
@@ -30,17 +25,17 @@ garbageString = char '<' *> map pack garbageString'
              <?> "Garbage string"
 
 mutual
-  groupList : Parser (List Tree)
+  groupList : Parser (List Stream)
   groupList = char '{' *!> (treeValue `sepBy` (char ',')) <* char '}'
              <?> "Group list"
 
-  treeValue : Parser Tree
+  treeValue : Parser Stream
   treeValue = (map Garbage garbageString)
             <|>| (map Group groupList)
 
 -- Solution
 
-depths : Nat -> Tree -> Nat
+depths : Nat -> Stream -> Nat
 depths k (Garbage x) = 0
 depths k (Group xs) = k + (sum (map (depths (S k)) xs))
 
@@ -48,7 +43,7 @@ export
 part1 : Either String Nat
 part1 = depths 1 <$> parse treeValue inputString
 
-measureGarbage : Tree -> Nat
+measureGarbage : Stream -> Nat
 measureGarbage (Garbage x) = length x
 measureGarbage (Group xs) = sum $ map measureGarbage xs
 

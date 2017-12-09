@@ -8,31 +8,31 @@ import Data.Vect
 %provide (inputString : String) with readString "Day7_short.txt"
 
 export
-data Tree : (weightSum : Nat) -> Type where
-  Leaf : (name : String) -> (weight : Nat) -> (Tree weight)
+data Tower : (weightSum : Nat) -> Type where
+  NoDisk : (name : String) -> (weight : Nat) -> (Tower weight)
 
-  Node : (name : String)
+  Disk : (name : String)
       -> (weight : Nat)
-      -> (ds : Vect (S n) (Tree subWeight))
-      -> (Tree (weight + ((S n) * subWeight)))
+      -> (ds : Vect (S n) (Tower subWeight))
+      -> (Tower (weight + ((S n) * subWeight)))
 
 -- Accessors
-getName : Tree w -> String
-getName (Leaf name _) = name
-getName (Node name _ _) = name
+getName : Tower w -> String
+getName (NoDisk name _) = name
+getName (Disk name _ _) = name
 
-getWeightSum : Tree w -> Nat
+getWeightSum : Tower w -> Nat
 getWeightSum {w} _ = w
 
-getWeight : Tree w -> Nat
-getWeight (Leaf _ weight) = weight
-getWeight (Node _ weight _) = weight
+getWeight : Tower w -> Nat
+getWeight (NoDisk _ weight) = weight
+getWeight (Disk _ weight _) = weight
 
-getInfo : Tree w -> (String, Nat, Nat)
+getInfo : Tower w -> (String, Nat, Nat)
 getInfo t = (getName t, getWeight t, getWeightSum t)
 
 -- Dependent Accessor
-infoPaired : (n ** Tree n) -> (String, Nat, Nat)
+infoPaired : (n ** Tower n) -> (String, Nat, Nat)
 infoPaired (_ ** pf) = getInfo pf
 
 -- Parsers & Input
@@ -61,15 +61,15 @@ depsOrder {retries=(S rets)} ((name, weight, (n ** children)) :: xs) deps =
   else depsOrder {retries=rets} (xs ++ [(name, weight, (n ** children))]) deps
 depsOrder _ _ = Nothing
 
--- Tree Builder
+-- Tower Builder
 findChildren : Vect n String
-             -> List (m ** Tree m)
-             -> Maybe (Vect n (l ** Tree l))
+             -> List (m ** Tower m)
+             -> Maybe (Vect n (l ** Tower l))
 findChildren xs ys = sequence $ map (\x => find (matchingName x) ys) xs
-  where matchingName : String -> (n ** Tree n) -> Bool
+  where matchingName : String -> (n ** Tower n) -> Bool
         matchingName s (x ** pf) = s == getName pf
 
-unifyChildren : (Vect n (l ** Tree l)) -> Maybe (m ** Vect n (Tree m))
+unifyChildren : (Vect n (l ** Tower l)) -> Maybe (m ** Vect n (Tower m))
 unifyChildren [] = Just (0 ** [])
 unifyChildren ((x ** xt) :: xs) =
   case unifyChildren xs of
@@ -79,26 +79,26 @@ unifyChildren ((x ** xt) :: xs) =
                             (No contra) => Nothing
     Nothing => Nothing
 
-makeNode : (name     : String)
+makeDisk : (name     : String)
         -> (weight   : Nat)
-        -> (children : (w ** Vect (S n) (Tree w)))
-        -> (x ** (Tree x))
-makeNode name weight (w ** sts) = (_ ** (Node name weight sts))
+        -> (children : (w ** Vect (S n) (Tower w)))
+        -> (x ** (Tower x))
+makeDisk name weight (w ** sts) = (_ ** (Disk name weight sts))
 
-makeTree : (inputs   : List (String, Nat, (n ** Vect n String)))
-        -> (tmpTrees : List (m ** Tree m))
+makeTower : (inputs   : List (String, Nat, (n ** Vect n String)))
+        -> (tmpTowers : List (m ** Tower m))
         -> Either (String, (List (String, Nat, Nat)))
-                  (l ** Tree l)
-makeTree [] [] = Left ("Can't build tree from empty list", [])
-makeTree [] (tree :: others) = Right tree
-makeTree ((name, weight, (n ** children)) :: xs) ts =
+                  (l ** Tower l)
+makeTower [] [] = Left ("Can't build tree from empty list", [])
+makeTower [] (tree :: others) = Right tree
+makeTower ((name, weight, (n ** children)) :: xs) ts =
   case n of
-    Z => makeTree xs ((weight ** (Leaf name weight)) :: ts)
+    Z => makeTower xs ((weight ** (NoDisk name weight)) :: ts)
     (S k) => case findChildren children ts of
                   Nothing => Left ("Not in deps order", [])
                   (Just cs) => case unifyChildren cs of
                                     Nothing => Left ("Not balanced", map infoPaired (toList cs))
-                                    (Just r) => makeTree xs ((makeNode name weight r) :: ts)
+                                    (Just r) => makeTower xs ((makeDisk name weight r) :: ts)
 
 -- Solution
 export
@@ -106,26 +106,26 @@ part1 : Maybe String
 part1 = fst <$> (depsOrder input [] >>= last')
 
 export
-part2 : Either (String, (List (String, Nat,Nat))) (l ** Tree l)
+part2 : Either (String, (List (String, Nat,Nat))) (l ** Tower l)
 part2 = case depsOrder input [] of
-             Just deps => makeTree deps []
+             Just deps => makeTower deps []
              Nothing => Left ("Failed to build deps", [])
 
 -- So that we can print the result
-namespace TreeShow
+namespace TowerShow
   partial
-  show : (w ** Tree w) -> String
-  show (_ ** Leaf name weight) = name ++ " (" ++ (show weight) ++ ")"
-  show (_ ** Node {subWeight} {n} name weight cs) =
-       foldl (++) (nodeStr ++ "\n") (map showChild cs)
+  show : (w ** Tower w) -> String
+  show (_ ** NoDisk name weight) = name ++ " (" ++ (show weight) ++ ")"
+  show (_ ** Disk {subWeight} {n} name weight cs) =
+       foldl (++) (diskStr ++ "\n") (map showChild cs)
     where sumWeight : Nat
           sumWeight = weight + (n * subWeight)
-          nodeStr = name ++ " -- " ++ (show sumWeight) ++ " (" ++ (show weight) ++ ")"
+          diskStr = name ++ " -- " ++ (show sumWeight) ++ " (" ++ (show weight) ++ ")"
           showChild c = unlines $ map ("    " ++) $ lines $ show (_ ** c)
 
 namespace ResultShow
   partial
-  show : Either (String, (List (String, Nat,Nat))) (w ** Tree w) -> String
+  show : Either (String, (List (String, Nat,Nat))) (w ** Tower w) -> String
   show (Left l) = "Failed: " ++ (show l)
   show (Right t) = show t
 
