@@ -9,11 +9,11 @@ import Data.Vect
 
 parseLine : String -> Maybe (String, Nat, (n ** Vect n String))
 parseLine s =
-  let (name, s') = break (== ' ') s in
-  let (_, s'') = span (flip List.elem [' ', '(']) s' in
-  let (weight, s''') = break (== ')') s'' in
-  let (_, s'''') = span (flip List.elem [')',' ','-','>']) s''' in
-  let children = (map trim $ split (== ',') s'''') \\ [""] in
+  let (name, s1) = break (== ' ') s in
+  let (_, s2) = span (flip List.elem [' ', '(']) s1 in
+  let (weight, s3) = break (== ')') s2 in
+  let (_, s4) = span (flip List.elem [')',' ','-','>']) s3 in
+  let children = (map trim $ split (== ',') s4) \\ [""] in
   Just (name, (cast weight), (length children ** fromList children))
 
 input : List (String, Nat, (n ** Vect n String))
