@@ -13,8 +13,8 @@ data Tree : (weightSum : Nat) -> Type where
 
   Node : (name : String)
       -> (weight : Nat)
-      -> (ds : Vect n (Tree subWeight))
-      -> (Tree (weight + (n * subWeight)))
+      -> (ds : Vect (S n) (Tree subWeight))
+      -> (Tree (weight + ((S n) * subWeight)))
 
 -- Accessors
 getName : Tree w -> String
@@ -68,7 +68,7 @@ unifyChildren ((x ** xt) :: xs) =
 
 makeNode : (name     : String)
         -> (weight   : Nat)
-        -> (children : (w ** Vect n (Tree w)))
+        -> (children : (w ** Vect (S n) (Tree w)))
         -> (x ** (Tree x))
 makeNode name weight (w ** sts) = (_ ** (Node name weight sts))
 
@@ -89,13 +89,13 @@ makeTree : (inputs   : List (String, Nat, (n ** Vect n String)))
 makeTree [] [] = Left ("Can't build tree from empty list", [])
 makeTree [] (tree :: others) = Right tree
 makeTree ((name, weight, (n ** children)) :: xs) ts =
-  if n == 0
-  then makeTree xs ((weight ** (Leaf name weight)) :: ts)
-  else case findChildren children ts of
-            Nothing => Left ("Not in deps order", [])
-            (Just cs) => case unifyChildren cs of
-                              Nothing => Left ("Not balanced", map infoPaired (toList cs))
-                              (Just r) => makeTree xs ((makeNode name weight r) :: ts)
+  case n of
+    Z => makeTree xs ((weight ** (Leaf name weight)) :: ts)
+    (S k) => case findChildren children ts of
+                  Nothing => Left ("Not in deps order", [])
+                  (Just cs) => case unifyChildren cs of
+                                    Nothing => Left ("Not balanced", map infoPaired (toList cs))
+                                    (Just r) => makeTree xs ((makeNode name weight r) :: ts)
 partial export
 part1 : Maybe String
 part1 = fst <$> (last' $ depsOrder input [])
@@ -116,7 +116,6 @@ namespace TreeShow
           sumWeight = weight + (n * subWeight)
           nodeStr = name ++ " -- " ++ (show sumWeight) ++ " (" ++ (show weight) ++ ")"
           showChild c = unlines $ map ("    " ++) $ lines $ show (_ ** c)
-  show _ = "Failed to show for some reason"
 
 namespace ResultShow
   partial
