@@ -7,6 +7,34 @@ import Data.Vect
 
 %provide (inputString : String) with readString "Day7_short.txt"
 
+data Tree : (weightSum : Nat) -> Type where
+  Leaf : (name : String) -> (weight : Nat) -> (Tree weight)
+
+  Node : (name : String)
+      -> (weight : Nat)
+      -> (ds : Vect n (Tree subWeight))
+      -> (Tree (weight + (n * subWeight)))
+
+-- Accessors
+getName : Tree w -> String
+getName (Leaf name _) = name
+getName (Node name _ _) = name
+
+getWeightSum : Tree w -> Nat
+getWeightSum {w} _ = w
+
+getWeight : Tree w -> Nat
+getWeight (Leaf _ weight) = weight
+getWeight (Node _ weight _) = weight
+
+getInfo : Tree w -> (String, Nat, Nat)
+getInfo t = (getName t, getWeight t, getWeightSum t)
+
+-- Dependent Accessor
+infoPaired : (n ** Tree n) -> (String, Nat, Nat)
+infoPaired (_ ** pf) = getInfo pf
+
+-- Parsers & Input
 parseLine : String -> Maybe (String, Nat, (n ** Vect n String))
 parseLine s =
   let (name, s1) = break (== ' ') s in
@@ -19,61 +47,59 @@ parseLine s =
 input : List (String, Nat, (n ** Vect n String))
 input = catMaybes $ map parseLine $ lines inputString
 
-data Tree : (weightSum : Nat) -> Type where
-  Leaf : (name : String) -> (weight : Nat) -> (Tree weight)
-  Node : (name : String) -> (weight : Nat) -> (ds : Vect n (Tree subWeight)) -> (Tree (weight + (n * subWeight)))
-
--- Accessors
-getName : Tree w -> String
-getName (Leaf name w) = name
-getName (Node name weight ds) = name
-
-getWeightSum : Tree w -> Nat
-getWeightSum {w} x = w
-
-getWeight : Tree w -> Nat
-getWeight (Leaf name w) = w
-getWeight (Node name weight ds) = weight
-
-getInfo : Tree w -> (String, Nat, Nat)
-getInfo t = (getName t, getWeight t, getWeightSum t)
-
--- Dependent Accessor
-infoPaired : (n ** Tree n) -> (String, Nat, Nat)
-infoPaired (x ** pf) = getInfo pf
-
 -- Tree Builder
-childrenTrees : Vect n String -> List (m ** Tree m) -> Maybe (Vect n (l ** Tree l))
-childrenTrees xs ys = sequence $ map (\x => find (matchingName x) ys) xs
+findChildren : Vect n String
+             -> List (m ** Tree m)
+             -> Maybe (Vect n (l ** Tree l))
+findChildren xs ys = sequence $ map (\x => find (matchingName x) ys) xs
   where matchingName : String -> (n ** Tree n) -> Bool
         matchingName s (x ** pf) = s == getName pf
 
-maybeMakeTree : (Vect n (l ** Tree l)) -> Either (List Nat) (m ** Vect n (Tree m))
-maybeMakeTree [] = Right (0 ** [])
-maybeMakeTree ((x ** xt) :: xs) =
-  case maybeMakeTree xs of
-    (Right (_ ** [])) => Right (x ** [xt])
-    (Right (y ** yt)) => case decEq y x of
-                            (Yes Refl) => Right (y ** (xt :: yt))
-                            (No contra) => Left $ x :: map (const y) (toList xs)
-    (Left is) => Left (x :: is)
+unifyChildren : (Vect n (l ** Tree l)) -> Maybe (m ** Vect n (Tree m))
+unifyChildren [] = Just (0 ** [])
+unifyChildren ((x ** xt) :: xs) =
+  case unifyChildren xs of
+    (Just (_ ** [])) => Just (x ** [xt])
+    (Just (y ** yt)) => case decEq y x of
+                            (Yes Refl) => Just (y ** (xt :: yt))
+                            (No contra) => Nothing
+    Nothing => Nothing
 
-makeTree : String -> (weight : Nat) -> (w ** Vect n (Tree w)) -> (x ** (Tree x))
-makeTree name weight (w ** sts) = (_ ** (Node name weight sts))
+makeNode : (name     : String)
+        -> (weight   : Nat)
+        -> (children : (w ** Vect n (Tree w)))
+        -> (x ** (Tree x))
+makeNode name weight (w ** sts) = (_ ** (Node name weight sts))
 
 partial
-iter : List (String, Nat, (n ** Vect n String)) -> List (m ** Tree m) -> Either (List (String, Nat, Nat)) (List (l ** Tree l))
-iter [] ys = Right ys
-iter ((name, weight, (n ** children)) :: xs) ys =
+depsOrder : (xs  : List (String, Nat, (n ** Vect n String)))
+         -> (tmp : List (String, Nat, (n ** Vect n String)))
+         -> List (String, Nat, (n ** Vect n String))
+depsOrder [] deps = reverse deps
+depsOrder ((name, weight, (n ** children)) :: xs) deps =
+  if n == 0 || all (\c => elem c (map fst deps)) children
+  then depsOrder xs ((name, weight, (n ** children)) :: deps)
+  else depsOrder (xs ++ [(name, weight, (n ** children))]) deps
+
+makeTree : (inputs   : List (String, Nat, (n ** Vect n String)))
+    -> (tmpTrees : List (m ** Tree m))
+    -> Either (String, (List (String, Nat, Nat)))
+              (l ** Tree l)
+makeTree [] [] = Left ("Can't build try from empty list", [])
+makeTree [] (tree :: others) = Right tree
+makeTree ((name, weight, (n ** children)) :: xs) ts =
   if n == 0
-  then iter xs ((weight ** (Leaf name weight)) :: ys)
-  else case childrenTrees children ys of
-            Nothing => iter (xs ++ [(name, weight, (n ** children))]) ys
-            (Just cs) => case maybeMakeTree cs of
-                              (Left l) => Left $ map infoPaired (toList cs)
-                              (Right r) => iter xs ((makeTree name weight r) :: ys)
+  then makeTree xs ((weight ** (Leaf name weight)) :: ts)
+  else case findChildren children ts of
+            Nothing => Left ("Not in deps order", [])
+            (Just cs) => case unifyChildren cs of
+                              Nothing => Left ("Not balanced", map infoPaired (toList cs))
+                              (Just r) => makeTree xs ((makeNode name weight r) :: ts)
+partial
+part1 : Maybe String
+part1 = fst <$> (last' $ depsOrder input [])
 
 -- Solution
 partial
-part2 : Either (List (String, Nat,Nat)) (List (l ** Tree l))
-part2 = iter input []
+part2 : Either (String, (List (String, Nat,Nat))) (l ** Tree l)
+part2 = makeTree (depsOrder input []) []
