@@ -50,9 +50,9 @@ input = catMaybes $ map parseLine $ lines inputString
 
 -- Dependency solver
 depsOrder : (xs  : List (String, Nat, (n ** Vect n String)))
-          -- Add bound retries for totality check
-         -> {default (fact (length xs)) retries : Nat}
          -> (tmp : List (String, Nat, (n ** Vect n String)))
+         -- Add bound retries for totality check
+         -> {default (fact (length xs)) retries : Nat}
          -> Maybe (List (String, Nat, (n ** Vect n String)))
 depsOrder [] deps = Just $ reverse deps
 depsOrder {retries=(S rets)} ((name, weight, (n ** children)) :: xs) deps =
