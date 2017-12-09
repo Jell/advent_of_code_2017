@@ -4,6 +4,7 @@ import Day2 as Day2
 import Day3 as Day3
 import Day4 as Day4
 import Day5 as Day5
+import Day7 as Day7
 
 main : IO ()
 main = do putStrLn "Day 1"
@@ -25,3 +26,7 @@ main = do putStrLn "Day 1"
           putStrLn "Day 5"
           printLn Day5.part1
           printLn Day5.part2
+
+          putStrLn "Day 7"
+          printLn Day7.part1
+          putStrLn Day7.part2str

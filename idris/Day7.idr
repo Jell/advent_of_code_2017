@@ -5,8 +5,9 @@ import Data.Vect
 %default total
 %language TypeProviders
 
-%provide (inputString : String) with readString "Day7_short.txt"
+%provide (inputString : String) with readString "Day7_input.txt"
 
+export
 data Tree : (weightSum : Nat) -> Type where
   Leaf : (name : String) -> (weight : Nat) -> (Tree weight)
 
@@ -95,11 +96,36 @@ makeTree ((name, weight, (n ** children)) :: xs) ts =
             (Just cs) => case unifyChildren cs of
                               Nothing => Left ("Not balanced", map infoPaired (toList cs))
                               (Just r) => makeTree xs ((makeNode name weight r) :: ts)
-partial
+partial export
 part1 : Maybe String
 part1 = fst <$> (last' $ depsOrder input [])
 
 -- Solution
-partial
+partial export
 part2 : Either (String, (List (String, Nat,Nat))) (l ** Tree l)
 part2 = makeTree (depsOrder input []) []
+
+-- So that we can print the result
+namespace TreeShow
+  partial
+  show : (w ** Tree w) -> String
+  show (_ ** Leaf name weight) = name ++ " (" ++ (show weight) ++ ")"
+  show (_ ** Node name weight cs) =
+       foldl (++) (nodeStr ++ "\n") (map (\c => (unlines (map (\l => pStr ++ l) $ lines $ show (_ ** c)))) cs)
+    where nodeStr : String
+          nodeStr = name ++ " (" ++ (show weight) ++ ")"
+          pLen : Nat
+          pLen = length nodeStr
+          pStr : String
+          pStr = pack $ the (List Char) (replicate pLen ' ')
+  show _ = "Failed to show for some reason"
+
+namespace ResultShow
+  partial
+  show : Either (String, (List (String, Nat,Nat))) (w ** Tree w) -> String
+  show (Left l) = "Failed: " ++ (show l)
+  show (Right t) = show t
+
+export partial
+part2str : String
+part2str = show part2
