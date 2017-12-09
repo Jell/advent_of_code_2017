@@ -112,7 +112,6 @@ traceEval : List a -> State a b -> List a
 traceEval [] run = []
 traceEval log@(state :: xs) run = (execState run state) :: log
 
-
 traceProg : List Instruction -> List (List (String, Int))
 traceProg is = foldl traceEval [[]] (map evalInstr is)
 
