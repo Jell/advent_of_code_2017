@@ -1,4 +1,4 @@
 .PHONY: run
 
 run:
-	idris Main.idr -o result && ./result
+	idris -p lightyear Main.idr -o result && ./result
