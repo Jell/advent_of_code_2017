@@ -72,15 +72,17 @@ makeNode : (name     : String)
         -> (x ** (Tree x))
 makeNode name weight (w ** sts) = (_ ** (Node name weight sts))
 
-partial
 depsOrder : (xs  : List (String, Nat, (n ** Vect n String)))
+          -- Add bound retries for totality check
+         -> {default (fact (length xs)) retries : Nat}
          -> (tmp : List (String, Nat, (n ** Vect n String)))
-         -> List (String, Nat, (n ** Vect n String))
-depsOrder [] deps = reverse deps
-depsOrder ((name, weight, (n ** children)) :: xs) deps =
+         -> Maybe (List (String, Nat, (n ** Vect n String)))
+depsOrder [] deps = Just $ reverse deps
+depsOrder {retries=NZ} _ _ = Nothing
+depsOrder {retries=(S rets)} ((name, weight, (n ** children)) :: xs) deps =
   if n == 0 || all (\c => elem c (map fst deps)) children
-  then depsOrder xs ((name, weight, (n ** children)) :: deps)
-  else depsOrder (xs ++ [(name, weight, (n ** children))]) deps
+  then depsOrder {retries=rets} xs ((name, weight, (n ** children)) :: deps)
+  else depsOrder {retries=rets} (xs ++ [(name, weight, (n ** children))]) deps
 
 makeTree : (inputs   : List (String, Nat, (n ** Vect n String)))
         -> (tmpTrees : List (m ** Tree m))
@@ -96,14 +98,15 @@ makeTree ((name, weight, (n ** children)) :: xs) ts =
                   (Just cs) => case unifyChildren cs of
                                     Nothing => Left ("Not balanced", map infoPaired (toList cs))
                                     (Just r) => makeTree xs ((makeNode name weight r) :: ts)
-partial export
+
 part1 : Maybe String
-part1 = fst <$> (last' $ depsOrder input [])
+part1 = fst <$> (depsOrder input [] >>= last')
 
 -- Solution
-partial export
 part2 : Either (String, (List (String, Nat,Nat))) (l ** Tree l)
-part2 = makeTree (depsOrder input []) []
+part2 = case depsOrder input [] of
+             Just deps => makeTree deps []
+             Nothing => Left ("Failed to build deps", [])
 
 -- So that we can print the result
 namespace TreeShow
