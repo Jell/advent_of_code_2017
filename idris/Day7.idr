@@ -85,7 +85,7 @@ makeTree : (inputs   : List (String, Nat, (n ** Vect n String)))
     -> (tmpTrees : List (m ** Tree m))
     -> Either (String, (List (String, Nat, Nat)))
               (l ** Tree l)
-makeTree [] [] = Left ("Can't build try from empty list", [])
+makeTree [] [] = Left ("Can't build tree from empty list", [])
 makeTree [] (tree :: others) = Right tree
 makeTree ((name, weight, (n ** children)) :: xs) ts =
   if n == 0
