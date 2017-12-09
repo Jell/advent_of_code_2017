@@ -5,7 +5,7 @@ import Data.Vect
 %default total
 %language TypeProviders
 
-%provide (inputString : String) with readString "Day7_input.txt"
+%provide (inputString : String) with readString "Day7_short.txt"
 
 export
 data Tree : (weightSum : Nat) -> Type where
@@ -110,14 +110,12 @@ namespace TreeShow
   partial
   show : (w ** Tree w) -> String
   show (_ ** Leaf name weight) = name ++ " (" ++ (show weight) ++ ")"
-  show (_ ** Node name weight cs) =
-       foldl (++) (nodeStr ++ "\n") (map (\c => (unlines (map (\l => pStr ++ l) $ lines $ show (_ ** c)))) cs)
-    where nodeStr : String
-          nodeStr = name ++ " (" ++ (show weight) ++ ")"
-          pLen : Nat
-          pLen = length nodeStr
-          pStr : String
-          pStr = pack $ the (List Char) (replicate pLen ' ')
+  show (_ ** Node {subWeight} {n} name weight cs) =
+       foldl (++) (nodeStr ++ "\n") (map showChild cs)
+    where sumWeight : Nat
+          sumWeight = weight + (n * subWeight)
+          nodeStr = name ++ " -- " ++ (show sumWeight) ++ " (" ++ (show weight) ++ ")"
+          showChild c = unlines $ map ("    " ++) $ lines $ show (_ ** c)
   show _ = "Failed to show for some reason"
 
 namespace ResultShow
