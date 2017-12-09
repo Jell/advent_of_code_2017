@@ -1,7 +1,8 @@
 module Day2
+import Data.Vect
 %default total
 
-input : List (List Nat)
+input : Vect 16 (Vect 16 Nat)
 input = [[116, 1259, 1045, 679, 1334, 157, 277, 1217, 218, 641, 1089, 136, 247, 1195, 239, 834],
          [269, 1751, 732, 3016, 260, 6440, 5773, 4677, 306, 230, 6928, 7182, 231, 2942, 2738, 3617],
          [644, 128, 89, 361, 530, 97, 35, 604, 535, 297, 599, 121, 567, 106, 114, 480],
@@ -19,17 +20,17 @@ input = [[116, 1259, 1045, 679, 1334, 157, 277, 1217, 218, 641, 1089, 136, 247, 
          [2432, 4030, 3397, 4032, 3952, 2727, 157, 3284, 3450, 3229, 4169, 3471, 4255, 155, 127, 186],
          [919, 615, 335, 816, 138, 97, 881, 790, 855, 89, 451, 789, 423, 108, 95, 116]]
 
-minmaxdiff : List Nat -> Maybe Nat
-minmaxdiff xs = do min <- head' sorted
-                   max <- last' sorted
-                   case isLTE min max of
-                        Yes prf => Just $ max - min
-                        No contra => Nothing
-  where sorted = sort xs
+minmaxdiff : Vect (S n) Nat -> Nat
+minmaxdiff xs =
+  let max = foldl1 maximum xs in
+  let min = foldl1 minimum xs in
+  case isLTE min max of
+       Yes prf => max - min
+       No contra => Z
 
 export
 part1 : Nat
-part1 = sum $ catMaybes $ map minmaxdiff input
+part1 = sum $ map minmaxdiff input
 
 divs : List Nat -> List Nat
 divs xs = do a <- xs
@@ -45,4 +46,4 @@ divs xs = do a <- xs
 
 export
 part2 : Nat
-part2 = sum $ map (sum . divs) input
+part2 = sum $ map (sum . divs . toList) input
