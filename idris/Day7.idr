@@ -38,13 +38,7 @@ getWeight (Node name weight ds) = weight
 getInfo : Tree w -> (String, Nat, Nat)
 getInfo t = (getName t, getWeight t, getWeightSum t)
 
--- Dependent Accessors
-nameFromPaired : (n ** Tree n) -> String
-nameFromPaired (x ** pf) = getName pf
-
-weightFromPaired : (n ** Tree n) -> Nat
-weightFromPaired (x ** pf) = getWeight pf
-
+-- Dependent Accessor
 infoPaired : (n ** Tree n) -> (String, Nat, Nat)
 infoPaired (x ** pf) = getInfo pf
 
