@@ -28,13 +28,24 @@ knotSet idx l chain sub =
 knotLens :: Int -> Int -> Simple Lens [a] [a]
 knotLens idx l = lens (knotGet idx l) (knotSet idx l)
 
+-- Can't use `[Simpler Lens [a] [a]]` as type because of problems with
+-- impredicative polymorphism.
+-- See: https://ghc.haskell.org/trac/ghc/wiki/ImpredicativePolymorphism
+makeKnotLenses :: forall f a. Functor f => Int -> Int -> Int -> [Int]
+               -> [([a] -> f [a]) -> [a] -> f [a]] -- Simple Lens [a] [a]
+               -> [([a] -> f [a]) -> [a] -> f [a]] -- Simple Lens [a] [a]
+makeKnotLenses idx skip maxIdx [] lenses = reverse lenses
+makeKnotLenses idx skip maxIdx (l : ls) lenses =
+   makeKnotLenses ((idx + skip + l) `mod` maxIdx)
+                  (skip + 1)
+                  maxIdx
+                  ls
+                  ((knotLens idx l) : lenses)
+
 encrypt' :: Int -> Int -> [a] -> [Int] -> [a]
-encrypt' idx skip chain [] = chain
-encrypt' idx skip chain (l : ls) =
-    encrypt' ((idx + skip + l) `mod` (length chain))
-             (skip + 1)
-             (chain & (knotLens idx l) %~ reverse)
-             ls
+encrypt' idx skip chain lengths =
+    makeKnotLenses idx skip (length chain) lengths [] &
+    foldl (\c l -> c & l %~ reverse) chain
 
 encrypt :: [a] -> [Int] -> [a]
 encrypt = encrypt' 0 0
