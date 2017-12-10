@@ -1,3 +1,4 @@
 *.ibc
 /idris/result
 .DS_Store
+.stack-work
