@@ -1,4 +1,4 @@
-(def input (read-string (slurp "day5_input.txt")))
+(def input (read-string (slurp "day05_input.txt")))
 
 (def maze-size (count input))
 

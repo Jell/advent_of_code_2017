@@ -1,7 +1,7 @@
 (require '[clojure.string :as str])
 
 (def input
-  (-> (slurp "day8_input.txt")
+  (-> (slurp "day08_input.txt")
       (str/split #"\n")))
 
 (defn parse [line]

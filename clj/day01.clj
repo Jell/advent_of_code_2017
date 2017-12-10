@@ -1,6 +1,6 @@
-(require [clojure.string :as str])
+(require '[clojure.string :as str])
 
-(def input (str/trim (slurp "day1_input.txt")))
+(def input (str/trim (slurp "day01_input.txt")))
 
 ;; Part 1
 (reduce + (map (fn [a b]
@@ -9,7 +9,6 @@
                    0))
                input
                (drop 1 (cycle input))))
-
 
 ;; Part 2
 (reduce + (map (fn [a b]

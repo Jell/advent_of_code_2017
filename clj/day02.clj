@@ -23,7 +23,7 @@
 
 (def xdiff (map (partial apply -)))
 
-(def result (transduce (comp xmaxmin xdiff) + input))
+(transduce (comp xmaxmin xdiff) + input)
 
 ;; Part 2
 

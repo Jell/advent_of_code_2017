@@ -2,7 +2,7 @@
 (require '[clojure.walk :as walk])
 (require '[clojure.pprint :as pp :refer [pprint]])
 
-(def input (str/split (slurp "day7_input.txt")
+(def input (str/split (slurp "day07_input.txt")
                       #"\n"))
 
 (defn parse [line]

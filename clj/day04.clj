@@ -1,6 +1,6 @@
 (require '[clojure.string :as str])
 
-(def input (slurp "day4_input.txt"))
+(def input (slurp "day04_input.txt"))
 
 ;; Part 1
 (->> (str/split input #"\n")

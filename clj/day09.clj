@@ -1,7 +1,7 @@
 (require '[clojure.test :refer [deftest are run-all-tests]])
 (require '[clojure.string :as str])
 
-(def input (slurp "day9_input.txt"))
+(def input (slurp "day09_input.txt"))
 
 (defn parse [s]
   (-> (str "[" s "]") ;; wrap to make sure we have a top-level group
