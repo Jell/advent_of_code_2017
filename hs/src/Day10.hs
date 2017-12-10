@@ -25,17 +25,16 @@ knotSet idx l chain sub =
     drop (chainLength - idx) &
     take chainLength
 
--- type Lens s t a b = forall f. Functor f => (a -> f b) -> s -> f t
-knotLens :: Int -> Int -> Lens [a] [a] [a] [a]
+knotLens :: Int -> Int -> Simple Lens [a] [a]
 knotLens idx l = lens (knotGet idx l) (knotSet idx l)
 
 encrypt' :: Int -> Int -> [a] -> [Int] -> [a]
 encrypt' idx skip chain [] = chain
 encrypt' idx skip chain (l : ls) =
     encrypt' ((idx + skip + l) `mod` (length chain))
-            (skip + 1)
-            (chain & (knotLens idx l) %~ reverse)
-            ls
+             (skip + 1)
+             (chain & (knotLens idx l) %~ reverse)
+             ls
 
 encrypt :: [a] -> [Int] -> [a]
 encrypt = encrypt' 0 0
