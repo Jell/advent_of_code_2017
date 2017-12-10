@@ -1,11 +1,11 @@
-module Day5
+module Day05
 import FileProvider
 import Data.Vect
 
 %default total
 %language TypeProviders
 
-%provide (inputString : String) with readString "Day5_short.txt"
+%provide (inputString : String) with readString "Day05_short.txt"
 
 input : List String
 input = lines inputString

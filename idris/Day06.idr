@@ -1,4 +1,4 @@
-module Day6
+module Day06
 import Data.Vect
 
 blocks : Vect 16 Nat

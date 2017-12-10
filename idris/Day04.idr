@@ -1,10 +1,10 @@
-module Day4
+module Day04
 import FileProvider
 
 %default total
 %language TypeProviders
 
-%provide (input : String) with readString "Day4_input.txt"
+%provide (input : String) with readString "Day04_input.txt"
 
 noDups : Eq a => List a -> Bool
 noDups xs = xs == (nub xs)

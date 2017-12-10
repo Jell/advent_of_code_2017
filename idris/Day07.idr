@@ -1,11 +1,11 @@
-module Day7
+module Day07
 import FileProvider
 import Data.Vect
 
 %default total
 %language TypeProviders
 
-%provide (inputString : String) with readString "Day7_short.txt"
+%provide (inputString : String) with readString "Day07_short.txt"
 
 export
 data Tower : (weightSum : Nat) -> Type where

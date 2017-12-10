@@ -1,9 +1,9 @@
-module Day1
+module Day01
 import FileProvider
 %default total
 %language TypeProviders
 
-%provide (inputString : String) with readString "Day1_input.txt"
+%provide (inputString : String) with readString "Day01_input.txt"
 
 input : String
 input = trim inputString

@@ -1,4 +1,4 @@
-module Day3
+module Day03
 %default total
 
 data Dir = Right | Up | Left | Down

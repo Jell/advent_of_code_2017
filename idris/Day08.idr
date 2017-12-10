@@ -1,11 +1,11 @@
-module Day8
+module Day08
 import FileProvider
 import Control.Monad.State
 
 %default total
 %language TypeProviders
 
-%provide (inputString : String) with readString "Day8_input.txt"
+%provide (inputString : String) with readString "Day08_input.txt"
 
 input : List String
 input = lines inputString

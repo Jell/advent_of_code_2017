@@ -1,4 +1,4 @@
-module Day9
+module Day09
 
 import FileProvider
 import Lightyear.Core
@@ -8,7 +8,7 @@ import Lightyear.Strings
 
 %language TypeProviders
 
-%provide (inputString : String) with readString "Day9_input.txt"
+%provide (inputString : String) with readString "Day09_input.txt"
 
 -- Types
 data Stream = Garbage String | Group (List Stream)
