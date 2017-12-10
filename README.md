@@ -72,3 +72,8 @@ Very boiler-platy in Idris, kinda fun with State monad.
 
 Easy and nice in Clojure using regexp.
 Was hard but kinda nice with parser combinator in Idris.
+
+### Day 10
+
+Lensing solution in Haskell because why not? Also lensing-like
+solution in Clojure.
