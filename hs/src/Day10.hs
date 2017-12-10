@@ -33,18 +33,13 @@ knotLens idx l = lens (knotGet idx l) (knotSet idx l)
 -- See: https://ghc.haskell.org/trac/ghc/wiki/ImpredicativePolymorphism
 makeKnotLenses :: forall f a. Functor f => Int -> Int -> Int -> [Int]
                -> [([a] -> f [a]) -> [a] -> f [a]] -- Simple Lens [a] [a]
-               -> [([a] -> f [a]) -> [a] -> f [a]] -- Simple Lens [a] [a]
-makeKnotLenses idx skip maxIdx [] lenses = reverse lenses
-makeKnotLenses idx skip maxIdx (l : ls) lenses =
-   makeKnotLenses ((idx + skip + l) `mod` maxIdx)
-                  (skip + 1)
-                  maxIdx
-                  ls
-                  ((knotLens idx l) : lenses)
+makeKnotLenses idx skip maxIdx [] = []
+makeKnotLenses idx skip maxIdx (l : ls) =
+  (knotLens idx l) : makeKnotLenses ((idx + skip + l) `mod` maxIdx) (skip + 1) maxIdx ls
 
 encrypt' :: Int -> Int -> [a] -> [Int] -> [a]
 encrypt' idx skip chain lengths =
-    makeKnotLenses idx skip (length chain) lengths [] &
+    makeKnotLenses idx skip (length chain) lengths &
     foldl (\c l -> c & l %~ reverse) chain
 
 encrypt :: [a] -> [Int] -> [a]
