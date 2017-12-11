@@ -3,8 +3,8 @@ import Data.Vect
 %default total
 %access export
 
-plusPlusSuccNotZero : ((n + (S k)) = 0) -> Void
-plusPlusSuccNotZero {n} {k} = rewrite plusCommutative n (S k) in SIsNotZ
+PlusPlusSuccNotZero : Not ((n + (S k)) = 0)
+PlusPlusSuccNotZero {n} {k} = rewrite plusCommutative n (S k) in SIsNotZ
 
 vectPlusMinusSame : LTE l n -> Vect (l + (n - l)) a -> Vect n a
 vectPlusMinusSame {l = Z} {n = Z} prf [] = []

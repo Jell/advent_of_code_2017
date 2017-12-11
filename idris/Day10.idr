@@ -33,7 +33,7 @@ tieKnot offset Z chain = chain
 tieKnot {n} offset len@(S k) chain =
    rotate reverseOffset $ swapKnot len $ rotate offset' chain
    where offset' : Nat
-         offset' = (modNatNZ offset (n + (S k)) (plusPlusSuccNotZero))
+         offset' = (modNatNZ offset (n + (S k)) PlusPlusSuccNotZero)
 
          reverseOffset : Nat
          reverseOffset = (-) (n + (S k)) offset'
