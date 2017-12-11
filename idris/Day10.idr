@@ -1,13 +1,20 @@
 module Day10
 import Data.Vect
+import Debug.Trace
 %default total
 
-input : Vect 256 Nat
-input = fromList [0..255]
+-- input : Vect 256 Nat
+-- input = fromList [0..255]
+--
+-- lengths : List (Fin 257)
+-- lengths = [165, 1, 255, 31, 87, 52, 24, 113,
+--            0, 91, 148, 254, 158, 2, 73, 153]
 
-lengths : List (Fin 257)
-lengths = [165, 1, 255, 31, 87, 52, 24, 113,
-           0, 91, 148, 254, 158, 2, 73, 153]
+input : Vect 5 Nat
+input = fromList [0..4]
+
+lengths : List (Fin 6)
+lengths = [3, 4, 1, 5]
 
 it'sfine : {len : Nat} -> Vect (len + 1) a -> Vect (S len) a
 it'sfine {len} xs = rewrite plusCommutative 1 len in xs
@@ -50,11 +57,12 @@ elemSmallerThanBound {m = Z} (FS (FS _)) impossible
 elemSmallerThanBound {m = (S k)} FZ = LTEZero
 elemSmallerThanBound {m = (S k)} (FS x) = LTESucc (elemSmallerThanBound x)
 
-encrypt : (chain : Vect n a) -> (lengths : List (Fin (S n))) -> Vect n a
+encrypt : Show a => (chain : Vect n a) -> (lengths : List (Fin (S n))) -> Vect n a
 encrypt = encrypt' 0 0 where
   encrypt' : (offset : Nat) -> (skip : Nat) -> (chain : Vect n a) -> (lengths : List (Fin (S n))) -> Vect n a
   encrypt' offset skip chain [] = chain
   encrypt' {n} offset skip chain (l :: lens) =
+      trace (show chain) $
       encrypt' (offset + skip + lNat) (skip + 1)
           (vectPlusMinusSame lLTEn $ (tieKnot {n=((-) n lNat {smaller=lLTEn})} offset lNat (vectSamePlusMinus lLTEn chain)))
           lens
@@ -65,7 +73,7 @@ encrypt = encrypt' 0 0 where
       lLTEn : LTE (finToNat l) n
       lLTEn = elemSmallerThanBound l
 
-part1encryption : Vect 256 Nat
+part1encryption : Vect 5 Nat
 part1encryption = encrypt input lengths
 
 export
