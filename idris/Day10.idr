@@ -44,23 +44,16 @@ vectSamePlusMinus {l = (S _)} {n = Z} LTEZero _ impossible
 vectSamePlusMinus {l = (S _)} {n = Z} (LTESucc _) _ impossible
 vectSamePlusMinus {l = (S k)} {n = (S j)} (LTESucc x) (y :: xs) = y :: vectSamePlusMinus x xs
 
--- encrypt : (chain : Vect n a) -> (lengths : List Nat) -> Vect n a
--- encrypt = encrypt' 0 0 where
---   encrypt' : (offset : Nat) -> (skip : Nat) -> (chain : Vect n a) -> (lengths : List Nat) -> Vect n a
---   encrypt' offset skip chain [] = chain
---   encrypt' {n} offset skip chain (l :: lens) =
---     case isLTE l n of
---       Yes prf => encrypt' (offset + skip + l) (skip + 1)
---           (vectPlusMinusSame prf $ (tieKnot {n=(n - l)} offset l (vectSamePlusMinus prf chain)))
---           lens
---       No contra => ?wat
-elemSmallerThanBound : (n : Fin m) -> LTE (finToNat n) m
-elemSmallerThanBound FZ = LTEZero
-elemSmallerThanBound (FS x) = LTESucc (elemSmallerThanBound x)
+elemSmallerThanBound : (n : Fin (S m)) -> LTE (finToNat n) m
+elemSmallerThanBound {m = Z} FZ = LTEZero
+elemSmallerThanBound {m = Z} (FS FZ) impossible
+elemSmallerThanBound {m = Z} (FS (FS _)) impossible
+elemSmallerThanBound {m = (S k)} FZ = LTEZero
+elemSmallerThanBound {m = (S k)} (FS x) = LTESucc (elemSmallerThanBound x)
 
-encrypt : (chain : Vect n a) -> (lengths : List (Fin n)) -> Vect n a
+encrypt : (chain : Vect n a) -> (lengths : List (Fin (S n))) -> Vect n a
 encrypt = encrypt' 0 0 where
-  encrypt' : (offset : Nat) -> (skip : Nat) -> (chain : Vect n a) -> (lengths : List (Fin n)) -> Vect n a
+  encrypt' : (offset : Nat) -> (skip : Nat) -> (chain : Vect n a) -> (lengths : List (Fin (S n))) -> Vect n a
   encrypt' offset skip chain [] = chain
   encrypt' {n} offset skip chain (l :: lens) =
       encrypt' (offset + skip + lNat) (skip + 1)
