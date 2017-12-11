@@ -38,7 +38,8 @@ tieKnot {n} offset len@(S k) xs =
          offset' = (modNatNZ offset (n + (S k)) (plusPlusSuccNotZero))
 
          reverseOffset : Nat
-         reverseOffset = (-) (n + (S k)) offset' {smaller = believe_me "lte"}
+         reverseOffset = (-) (n + (S k)) offset'
+           {smaller = believe_me "because of modulo above"}
 
 vectPlusMinusSame : LTE l n -> Vect (l + (n - l)) a -> Vect n a
 vectPlusMinusSame {l = Z} {n = Z} prf [] = []
