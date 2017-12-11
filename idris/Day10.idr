@@ -14,7 +14,7 @@ input : Vect 5 Nat
 input = fromList [0..4]
 
 lengths : List (Fin 6)
-lengths = [3, 4, 1, 5, 3, 3, 3]
+lengths = [3, 4, 1, 5]
 
 rotate : (offset : Nat) -> Vect n a -> Vect n a
 rotate _ [] = []
