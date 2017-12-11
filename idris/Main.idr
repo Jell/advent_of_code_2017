@@ -9,6 +9,7 @@ import Day06 as Day06
 import Day07 as Day07
 import Day08 as Day08
 import Day09 as Day09
+import Day10 as Day10
 
 main : IO ()
 main = do putStrLn "Day 1"
@@ -47,3 +48,6 @@ main = do putStrLn "Day 1"
           putStrLn "Day 9"
           printLn Day09.part1
           printLn Day09.part2
+
+          putStrLn "Day 10"
+          printLn Day10.part1

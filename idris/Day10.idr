@@ -2,13 +2,12 @@ module Day10
 import Data.Vect
 %default total
 
-input : Vect 5 Int
-input = fromList [0..4]
+input : Vect 256 Nat
+input = fromList [0..255]
 
-lengths : List (Fin 6)
--- lengths = [165, 1, 255, 31, 87, 52, 24, 113,
---            0, 91, 148, 254, 158, 2, 73, 153]
-lengths = [3, 4, 1, 5]
+lengths : List (Fin 257)
+lengths = [165, 1, 255, 31, 87, 52, 24, 113,
+           0, 91, 148, 254, 158, 2, 73, 153]
 
 it'sfine : {len : Nat} -> Vect (len + 1) a -> Vect (S len) a
 it'sfine {len} xs = rewrite plusCommutative 1 len in xs
@@ -28,7 +27,7 @@ tieKnot : (offset : Nat) -> (len : Nat) -> Vect (len + n) a -> Vect (len + n) a
 tieKnot offset Z xs = xs
 tieKnot {n} offset len@(S k) xs = rotate reverseOffset $ swapKnot len $ rotate offset xs
    where reverseOffset : Nat
-         reverseOffset = (modNatNZ (n + (S k) + offset) (n + (S k)) (plusPlusSuccNotZero))
+         reverseOffset = (modNatNZ (n + (S k) + offset + 1) (n + (S k)) (plusPlusSuccNotZero))
 
 vectPlusMinusSame : LTE l n -> Vect (l + (n - l)) a -> Vect n a
 vectPlusMinusSame {l = Z} {n = Z} prf [] = []
@@ -65,3 +64,10 @@ encrypt = encrypt' 0 0 where
 
       lLTEn : LTE (finToNat l) n
       lLTEn = elemSmallerThanBound l
+
+part1encryption : Vect 256 Nat
+part1encryption = encrypt input lengths
+
+export
+part1 : Nat
+part1 = foldl1 (*) $ take 2 $ part1encryption
