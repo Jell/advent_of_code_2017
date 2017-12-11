@@ -50,19 +50,19 @@ encrypt = flip (encrypt' 0 0) where
           -> Vect n a
   encrypt' offset skip [] chain = chain
   encrypt' {n} offset skip (l :: ls) chain =
-      encrypt' (offset + skip + lNat) (skip + 1) ls
-          -- That's a mess, but without the proofs it calls tieKnot with offset, lNat and chain
-          (vectPlusMinusSame lLTEn $
-            (tieKnot {n=((-) n lNat {smaller=lLTEn})} -- Cannot be inferred
-                     offset
-                     lNat
-                     (vectSamePlusMinus lLTEn chain)))
-    where
-      lNat : Nat
-      lNat = finToNat l
+    encrypt' (offset + skip + lNat) (skip + 1) ls
+             -- That's a mess, but without the proofs it calls
+             -- tieKnot with offset, lNat and chain
+             (vectPlusMinusSame lLTEn $
+               (tieKnot {n=((-) n lNat {smaller=lLTEn})} -- Cannot be inferred
+                        offset
+                        lNat
+                        (vectSamePlusMinus lLTEn chain)))
+    where lNat : Nat
+          lNat = finToNat l
 
-      lLTEn : LTE (finToNat l) n
-      lLTEn = elemSmallerThanBound l
+          lLTEn : LTE (finToNat l) n
+          lLTEn = elemSmallerThanBound l
 
 part1encryption : Vect 5 Nat
 part1encryption = encrypt input lengths
