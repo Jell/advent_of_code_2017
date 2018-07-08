@@ -36,17 +36,17 @@ infoPaired : (n ** Tower n) -> (String, Nat, Nat)
 infoPaired (_ ** pf) = getInfo pf
 
 -- Parsers & Input
-parseLine : String -> Maybe (String, Nat, (n ** Vect n String))
+parseLine : String -> (String, Nat, (n ** Vect n String))
 parseLine s =
   let (name, s1) = break (== ' ') s in
   let (_, s2) = span (flip List.elem [' ', '(']) s1 in
   let (weight, s3) = break (== ')') s2 in
   let (_, s4) = span (flip List.elem [')',' ','-','>']) s3 in
   let children = (map trim $ split (== ',') s4) \\ [""] in
-  Just (name, (cast weight), (length children ** fromList children))
+  (name, (cast weight), (length children ** fromList children))
 
 input : List (String, Nat, (n ** Vect n String))
-input = catMaybes $ map parseLine $ lines inputString
+input = map parseLine $ lines inputString
 
 -- Dependency solver
 depsOrder : (xs  : List (String, Nat, (n ** Vect n String)))

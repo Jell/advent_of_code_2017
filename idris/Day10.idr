@@ -70,3 +70,13 @@ part1encryption = encrypt input lengths
 export
 part1 : Nat
 part1 = foldl1 (*) $ take 2 $ part1encryption
+
+lengthStr : String
+lengthStr = "165,1,255,31,87,52,24,113,0,91,148,254,158,2,73,153"
+
+salt : List (Fin 257)
+salt = [17, 31, 73, 47, 23]
+
+strToLengths : (n : Nat) -> String -> Maybe (List (Fin n))
+strToLengths n s = sequence $ map (\c => natToFin (toNat c) n)
+                                  (unpack s)
